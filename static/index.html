@@ -34,7 +34,6 @@
     methods: {
       sendMessage() {
         console.log(`send: ${this.text}`);
-        this.messages.push(this.text);
         this.socket.emit("msgToServer", this.text);
         this.text = "";
       },
