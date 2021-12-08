@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -10,7 +11,12 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway(3001, {
+  path: '/websockets',
+  serveClient: true,
+  namespace: '/',
+  cors: true,
+})
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -21,11 +27,11 @@ export class AppGateway
     this.logger.log('Initialized Sokket ');
   }
 
-  handleConnection(client: Socket, ...args): any {
+  handleConnection(@ConnectedSocket() client: Socket, ...args): any {
     this.logger.log(`Client connected: ${client.id}`);
   }
 
-  handleDisconnect(client: Socket): any {
+  handleDisconnect(@ConnectedSocket() client: Socket): any {
     this.logger.log(`Client Diconected: ${client.id}`);
   }
 
@@ -36,7 +42,7 @@ export class AppGateway
     //   data: 'Hello Bogdan',
     //   event: 'msgToClient',
     // };
-    this.wss.emit('msqToClient', text);
+    this.wss.emit('msgToClient', text);
   }
 }
 
